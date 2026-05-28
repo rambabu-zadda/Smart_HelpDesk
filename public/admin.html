@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Smart Community Helpdesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Operations dashboard</p>
+        <h1>Smart Community Helpdesk</h1>
+      </div>
+      <div class="admin-actions">
+        <span id="adminEmail">Checking account...</span>
+        <button type="button" id="logoutButton" class="btn neutral">Logout</button>
+        <a href="index.html" class="btn secondary">Home</a>
+      </div>
+    </header>
+
+    <section class="metric-grid" aria-label="Complaint summary">
+      <article class="metric-card">
+        <span>Total</span>
+        <strong id="totalCount">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Pending</span>
+        <strong id="pendingCount">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>In Progress</span>
+        <strong id="progressCount">0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Resolved</span>
+        <strong id="resolvedCount">0</strong>
+      </article>
+    </section>
+
+    <section class="table-panel">
+      <div class="section-heading compact">
+        <h2>Submitted complaints</h2>
+        <p>Review issue details and update the current resolution status.</p>
+      </div>
+      <p id="adminMessage" class="helper admin-message" role="status"></p>
+
+      <div class="admin-tools">
+        <label>
+          Search
+          <input type="search" id="adminSearch" placeholder="Search ID, issue, area, district">
+        </label>
+        <label>
+          Status
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Assigned">Assigned</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Feedback Submitted">Feedback Submitted</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </label>
+        <label>
+          Category
+          <select id="categoryFilter">
+            <option value="">All Categories</option>
+          </select>
+        </label>
+        <label>
+          Department
+          <select id="departmentFilter">
+            <option value="">All Departments</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="chart-panel">
+        <h3>Category load</h3>
+        <div id="categoryChart" class="bar-chart"></div>
+      </div>
+      <div class="chart-panel analytics-grid">
+        <article>
+          <h3>Status split</h3>
+          <div id="statusChart" class="bar-chart"></div>
+        </article>
+        <article>
+          <h3>Area hotspots</h3>
+          <div id="areaChart" class="bar-chart"></div>
+        </article>
+        <article>
+          <h3>Monthly trend</h3>
+          <div id="monthlyChart" class="bar-chart"></div>
+        </article>
+        <article>
+          <h3>Avg resolution</h3>
+          <p id="resolutionMetric" class="big-metric">No resolved data</p>
+        </article>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Complaint</th>
+              <th>Issue</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Department</th>
+              <th>Submitted</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody id="complaintTable">
+            <tr>
+              <td colspan="7" class="empty-state">Loading complaints...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="rolePanel" class="table-panel role-panel" hidden>
+      <div class="section-heading compact">
+        <h2>User roles</h2>
+        <p>Promote trusted users to admin or department officer roles.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Current Role</th>
+              <th>Change Role</th>
+            </tr>
+          </thead>
+          <tbody id="userTable">
+            <tr>
+              <td colspan="3" class="empty-state">Loading users...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="admin.js" type="module"></script>
+</body>
+</html>

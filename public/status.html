@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Status | Smart Community Helpdesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="panel status-panel">
+      <a href="index.html" class="back-link">Back to home</a>
+      <div class="section-heading">
+        <p class="eyebrow">Track complaint</p>
+        <h1>Check complaint status</h1>
+        <p>Enter the complaint ID generated after submission.</p>
+      </div>
+
+      <form id="statusForm" class="search-form">
+        <label>
+          Complaint ID
+          <input type="text" id="complaintId" placeholder="SCH-20260524-ABC123" autocomplete="off" required>
+        </label>
+        <button type="submit" class="btn primary">Check Status</button>
+      </form>
+
+      <div id="notificationPanel" class="result-panel" hidden></div>
+      <div id="statusResult" class="result-panel" hidden></div>
+      <form id="feedbackForm" class="stacked-form feedback-form" hidden>
+        <label>
+          Rating
+          <select id="rating" required>
+            <option value="">Select rating</option>
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Good</option>
+            <option value="3">3 - Average</option>
+            <option value="2">2 - Poor</option>
+            <option value="1">1 - Not resolved</option>
+          </select>
+        </label>
+        <label>
+          Feedback
+          <textarea id="feedbackText" rows="3" placeholder="Share whether the issue was resolved properly." required></textarea>
+        </label>
+        <p id="feedbackMessage" class="helper" role="status"></p>
+        <button type="submit" class="btn secondary">Submit Feedback</button>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="status.js"></script>
+</body>
+</html>

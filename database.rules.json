@@ -1,0 +1,68 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".validate": "newData.hasChildren(['email', 'role', 'updatedAt'])",
+        "email": { ".validate": "newData.isString()" },
+        "role": {
+          ".validate": "newData.isString() && newData.val().matches(/^(citizen|admin|department_officer)$/) && (!data.exists() ? newData.val() === 'citizen' : (root.child('users').child(auth.uid).child('role').val() === 'admin' || newData.val() === data.val()))"
+        },
+        "createdAt": { ".validate": "!newData.exists() || newData.isNumber()" },
+        "lastLoginAt": { ".validate": "!newData.exists() || newData.isNumber()" },
+        "updatedAt": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    },
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$notificationId": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+          ".validate": "newData.hasChildren(['complaintId', 'message', 'status', 'read', 'createdAt'])",
+          "complaintId": { ".validate": "newData.isString()" },
+          "message": { ".validate": "newData.isString()" },
+          "status": { ".validate": "newData.isString()" },
+          "read": { ".validate": "newData.isBoolean()" },
+          "createdAt": { ".validate": "newData.isNumber()" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+    "complaints": {
+      ".read": true,
+      ".indexOn": ["complaintId", "status", "category", "department", "createdAt", "userId"],
+      "$key": {
+        ".write": "auth != null && ((!data.exists() && newData.child('userId').val() === auth.uid) || (data.exists() && root.child('users').child(auth.uid).child('role').val() === 'admin') || (data.exists() && data.child('userId').val() === auth.uid && data.child('status').val() === 'Resolved' && newData.child('status').val() === 'Feedback Submitted'))",
+        ".validate": "newData.hasChildren(['complaintId', 'state', 'district', 'town', 'area', 'category', 'issue', 'userId', 'userEmail', 'status', 'priority', 'department', 'assignedTo', 'createdAt', 'updatedAt'])",
+        "complaintId": { ".validate": "newData.isString() && newData.val().matches(/^SCH-[0-9]{8}-[A-Z0-9]{6}$/)" },
+        "state": { ".validate": "newData.isString() && newData.val().length > 0" },
+        "district": { ".validate": "newData.isString() && newData.val().length > 0" },
+        "town": { ".validate": "newData.isString() && newData.val().length > 0" },
+        "area": { ".validate": "newData.isString() && newData.val().length > 0" },
+        "category": { ".validate": "newData.isString() && newData.val().length > 0" },
+        "issue": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500" },
+        "userId": { ".validate": "newData.isString() && (!data.exists() ? newData.val() === auth.uid : newData.val() === data.val())" },
+        "userEmail": { ".validate": "newData.isString()" },
+        "location": { ".validate": "!newData.exists() || newData.hasChildren(['lat', 'lng'])" },
+        "status": { ".validate": "newData.isString() && newData.val().matches(/^(Pending|Assigned|In Progress|Resolved|Feedback Submitted|Rejected)$/)" },
+        "priority": { ".validate": "newData.isString() && newData.val().matches(/^(Normal|Medium|High)$/)" },
+        "department": { ".validate": "newData.isString()" },
+        "assignedTo": { ".validate": "newData.isString()" },
+        "aiSummary": { ".validate": "!newData.exists() || newData.isString()" },
+        "aiConfidence": { ".validate": "!newData.exists() || newData.isNumber()" },
+        "duplicateHint": { ".validate": "!newData.exists() || newData.isString()" },
+        "photoUrl": { ".validate": "!newData.exists() || newData.isString()" },
+        "photoPath": { ".validate": "!newData.exists() || newData.isString()" },
+        "feedback": { ".validate": "!newData.exists() || newData.isString()" },
+        "rating": { ".validate": "!newData.exists() || newData.isNumber()" },
+        "source": { ".validate": "!newData.exists() || newData.isString()" },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "updatedAt": { ".validate": "newData.isNumber()" },
+        "resolvedAt": { ".validate": "!newData.exists() || newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

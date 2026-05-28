@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Smart Community Helpdesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="panel status-panel">
+      <a href="index.html" class="back-link">Back to home</a>
+      <div class="section-heading">
+        <p class="eyebrow">Secure access</p>
+        <h1>Login or create account</h1>
+        <p>Use one account to file complaints, track updates, and access protected dashboards.</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+        <button type="button" id="loginMode" class="active">Login</button>
+        <button type="button" id="signupMode">Sign up</button>
+      </div>
+
+      <form id="authForm" class="stacked-form">
+        <label>
+          Email
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" placeholder="Minimum 6 characters" autocomplete="current-password" required>
+        </label>
+        <p id="authMessage" class="helper" role="status"></p>
+        <button type="submit" id="authSubmit" class="btn primary">Login</button>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="login.js"></script>
+</body>
+</html>

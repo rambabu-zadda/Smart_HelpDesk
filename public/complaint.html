@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report an Issue | Smart Community Helpdesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="panel form-panel">
+      <a href="index.html" class="back-link">Back to home</a>
+      <div class="auth-strip">
+        <span id="userEmail">Checking account...</span>
+        <button type="button" id="logoutButton" class="text-button">Logout</button>
+      </div>
+      <div class="section-heading">
+        <p class="eyebrow">Citizen complaint</p>
+        <h1>Report a community issue</h1>
+        <p>Share the location and details so the right team can review it quickly.</p>
+      </div>
+
+      <div class="complaint-layout">
+        <form id="complaintForm" class="stacked-form">
+          <div class="form-grid">
+            <label>
+            State
+            <select id="state" required>
+              <option value="">Select State</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+              <option value="Assam">Assam</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Chhattisgarh">Chhattisgarh</option>
+              <option value="Goa">Goa</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Himachal Pradesh">Himachal Pradesh</option>
+              <option value="Jharkhand">Jharkhand</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Manipur">Manipur</option>
+              <option value="Meghalaya">Meghalaya</option>
+              <option value="Mizoram">Mizoram</option>
+              <option value="Nagaland">Nagaland</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Sikkim">Sikkim</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Tripura">Tripura</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Uttarakhand">Uttarakhand</option>
+              <option value="West Bengal">West Bengal</option>
+            </select>
+            </label>
+
+            <label>
+            District
+            <select id="district" required>
+              <option value="">Select District</option>
+            </select>
+            </label>
+
+            <label>
+            Town / Village
+            <input type="text" id="town" placeholder="Example: Miyapur" required>
+            </label>
+
+            <label>
+            Area / Landmark
+            <input type="text" id="area" placeholder="Example: Main road near park" required>
+            </label>
+
+            <label>
+            Category
+            <select id="category" required>
+              <option value="">Select Category</option>
+              <option value="Roads">Roads</option>
+              <option value="Water Supply">Water Supply</option>
+              <option value="Electricity">Electricity</option>
+              <option value="Waste Management">Waste Management</option>
+              <option value="Drainage">Drainage</option>
+              <option value="Public Safety">Public Safety</option>
+              <option value="Other">Other</option>
+            </select>
+            </label>
+          </div>
+
+          <label>
+            Issue Details
+            <textarea id="issue" placeholder="Describe the issue, impact, and nearby landmarks." rows="5" maxlength="500" required></textarea>
+          </label>
+
+          <label>
+            Upload Photo
+            <input type="file" id="issuePhoto" accept="image/*">
+          </label>
+
+          <div class="form-helper-row">
+            <p id="locationStatus" class="helper">Detecting location...</p>
+            <p id="charCounter" class="helper">0 / 500</p>
+          </div>
+
+          <p id="formMessage" class="helper" role="status"></p>
+
+          <button type="submit" class="btn primary">Submit Complaint</button>
+        </form>
+
+        <aside class="live-preview" aria-live="polite">
+          <p class="eyebrow">Live triage</p>
+          <h2 id="previewTitle">Complaint preview</h2>
+          <dl class="status-grid">
+            <div><dt>Suggested Category</dt><dd id="suggestedCategory">Waiting for details</dd></div>
+            <div><dt>Priority</dt><dd id="suggestedPriority">Normal</dd></div>
+            <div><dt>Department</dt><dd id="suggestedDepartment">Not assigned</dd></div>
+            <div><dt>Location</dt><dd id="previewLocation">Not selected</dd></div>
+            <div><dt>Readiness</dt><dd id="readinessScore">0%</dd></div>
+          </dl>
+          <p id="duplicateHint" class="helper">Duplicate check will run after you describe the issue.</p>
+          <p id="previewIssue" class="issue-preview">Start typing the complaint details to see a quick summary.</p>
+        </aside>
+      </div>
+
+      <div id="successPanel" class="success-panel" hidden>
+        <p class="eyebrow">Submitted</p>
+        <h2>Your complaint ID is <span id="complaintIdOutput"></span></h2>
+        <p>Use this ID on the status page to track updates.</p>
+        <div class="action-row compact-actions">
+          <button type="button" id="copyComplaintId" class="btn neutral">Copy ID</button>
+          <a href="status.html" id="trackStatusLink" class="btn secondary">Track status</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
