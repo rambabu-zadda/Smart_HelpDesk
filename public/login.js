@@ -2,7 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { ref, set, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { get, ref, set, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 import { auth, db } from "./firebase-config.js";
 
 const form = document.getElementById("authForm");
@@ -15,6 +15,7 @@ const signupMode = document.getElementById("signupMode");
 
 let mode = "login";
 const AUTH_TIMEOUT_MS = 12000;
+const PROFILE_TIMEOUT_MS = 3500;
 
 function setMode(nextMode) {
   mode = nextMode;
@@ -53,11 +54,31 @@ async function createUserProfile(user) {
 }
 
 async function touchUserProfile(user) {
-  await update(ref(db, `users/${user.uid}`), {
+  const userRef = ref(db, `users/${user.uid}`);
+  const snapshot = await get(userRef);
+
+  if (!snapshot.exists()) {
+    await createUserProfile(user);
+    return;
+  }
+
+  await update(userRef, {
     email: user.email,
     lastLoginAt: Date.now(),
     updatedAt: Date.now()
   });
+}
+
+async function setupProfileWithoutBlocking(user, isNewAccount) {
+  try {
+    await withTimeout(
+      isNewAccount ? createUserProfile(user) : touchUserProfile(user),
+      PROFILE_TIMEOUT_MS,
+      "Profile setup is slow. Continuing to the app."
+    );
+  } catch (error) {
+    console.warn("Profile setup skipped", error);
+  }
 }
 
 form.addEventListener("submit", async (event) => {
@@ -77,20 +98,8 @@ form.addEventListener("submit", async (event) => {
       "Firebase Authentication did not respond. Check if Email/Password sign-in is enabled and try again."
     );
 
-    if (mode === "signup") {
-      await withTimeout(
-        createUserProfile(credential.user),
-        AUTH_TIMEOUT_MS,
-        "Account was created, but profile setup timed out. Try logging in again."
-      );
-    } else {
-      await withTimeout(
-        touchUserProfile(credential.user),
-        AUTH_TIMEOUT_MS,
-        "Login worked, but profile update timed out. Opening the app now."
-      );
-    }
-
+    setMessage("Login successful. Opening the app...", "success");
+    await setupProfileWithoutBlocking(credential.user, mode === "signup");
     window.location.href = getRedirectTarget();
   } catch (error) {
     console.error("Authentication failed", error);

@@ -5,7 +5,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth
 const firebaseConfig = {
   apiKey: "AIzaSyBdEjoWI4pAkPHwEaM4uAWQ5jWe_uuWvs4",
   authDomain: "smart-community-helpdesk.firebaseapp.com",
-  databaseURL: "https://smart-community-helpdesk-default-rtdb.firebaseio.com",
+  databaseURL: "https://smart-community-helpdesk-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "smart-community-helpdesk"
 };
 
