@@ -14,6 +14,7 @@ const loginMode = document.getElementById("loginMode");
 const signupMode = document.getElementById("signupMode");
 
 let mode = "login";
+const AUTH_TIMEOUT_MS = 12000;
 
 function setMode(nextMode) {
   mode = nextMode;
@@ -31,6 +32,15 @@ function setMessage(message, tone = "muted") {
 function getRedirectTarget() {
   const redirect = new URLSearchParams(window.location.search).get("redirect");
   return redirect && !redirect.startsWith("http") ? redirect : "index.html";
+}
+
+function withTimeout(promise, timeoutMs, message) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
 
 async function createUserProfile(user) {
@@ -53,19 +63,32 @@ async function touchUserProfile(user) {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   submitButton.disabled = true;
+  submitButton.textContent = mode === "login" ? "Signing in..." : "Creating...";
   setMessage(mode === "login" ? "Signing you in..." : "Creating your account...");
 
   try {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    const credential = mode === "login"
-      ? await signInWithEmailAndPassword(auth, email, password)
-      : await createUserWithEmailAndPassword(auth, email, password);
+    const credential = await withTimeout(
+      mode === "login"
+        ? signInWithEmailAndPassword(auth, email, password)
+        : createUserWithEmailAndPassword(auth, email, password),
+      AUTH_TIMEOUT_MS,
+      "Firebase Authentication did not respond. Check if Email/Password sign-in is enabled and try again."
+    );
 
     if (mode === "signup") {
-      await createUserProfile(credential.user);
+      await withTimeout(
+        createUserProfile(credential.user),
+        AUTH_TIMEOUT_MS,
+        "Account was created, but profile setup timed out. Try logging in again."
+      );
     } else {
-      await touchUserProfile(credential.user);
+      await withTimeout(
+        touchUserProfile(credential.user),
+        AUTH_TIMEOUT_MS,
+        "Login worked, but profile update timed out. Opening the app now."
+      );
     }
 
     window.location.href = getRedirectTarget();
@@ -74,6 +97,7 @@ form.addEventListener("submit", async (event) => {
     setMessage(error.message || "Authentication failed. Please try again.", "error");
   } finally {
     submitButton.disabled = false;
+    submitButton.textContent = mode === "login" ? "Login" : "Create account";
   }
 });
 
