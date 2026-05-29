@@ -1,7 +1,7 @@
 import { ref, push, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-import { getDownloadURL, ref as storageRef, uploadBytes } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
-import { db, storage } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
 import { attachLogout, waitForUser } from "./auth-utils.js";
+import { cloudinaryConfig } from "./cloudinary-config.js";
 import { getLocalComplaints, saveLocalComplaint } from "./local-store.js";
 
 const districtData = {
@@ -163,15 +163,31 @@ async function uploadIssuePhoto(complaintId) {
     throw new Error("Photo must be smaller than 5 MB.");
   }
 
-  const extension = file.name.split(".").pop() || "jpg";
-  const path = `complaints/${currentUser.uid}/${complaintId}.${extension}`;
-  const photoRef = storageRef(storage, path);
-  await withTimeout(
-    uploadBytes(photoRef, file),
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", cloudinaryConfig.uploadPreset);
+  formData.append("folder", `smart-helpdesk/${currentUser.uid}`);
+  formData.append("public_id", complaintId);
+
+  const response = await withTimeout(
+    fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
+    }),
     FIREBASE_TIMEOUT_MS,
-    "Firebase Storage did not respond in time. Complaint will be saved without a cloud photo."
+    "Cloudinary did not respond in time. Complaint will be saved without a cloud photo."
   );
-  return getDownloadURL(photoRef);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Cloudinary upload failed: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return {
+    url: data.secure_url,
+    path: data.public_id
+  };
 }
 
 function updatePreview() {
@@ -272,10 +288,10 @@ async function submitIssue(event) {
   setFormMessage("Submitting your complaint...", "muted");
 
   try {
-    const uploadedPhotoUrl = await uploadIssuePhoto(complaint.complaintId);
-    if (uploadedPhotoUrl) {
-      complaint.photoUrl = uploadedPhotoUrl;
-      complaint.photoPath = `complaints/${currentUser.uid}/${complaint.complaintId}`;
+    const uploadedPhoto = await uploadIssuePhoto(complaint.complaintId);
+    if (uploadedPhoto) {
+      complaint.photoUrl = uploadedPhoto.url;
+      complaint.photoPath = uploadedPhoto.path;
     }
 
     const complaintRef = push(ref(db, "complaints"));
