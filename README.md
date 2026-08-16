@@ -8,14 +8,14 @@ Firebase Authentication
 Firebase Database / Firestore
 Cloudinary — complaint image uploads
 HTML/CSS/JavaScript (the screenshot alone does not provide enough evidence to specify the exact frontend framework)
-Key Features
-👤 User authentication and profile management
-📝 Complaint/issue submission
-📊 Complaint tracking
-🖼️ Image upload for complaints
-🔥 Firebase backend/database integration
-☁️ Cloudinary-based image storage
-🌐 Community/government helpdesk workflow
+Key Features :
+👤 User authentication and profile management,
+📝 Complaint/issue submission,
+📊 Complaint tracking,
+🖼️ Image upload for complaints,
+🔥 Firebase backend/database integration,
+☁️ Cloudinary-based image storage,
+🌐 Community/government helpdesk workflow,
 Short resume description
 
 Smart HelpDesk | Firebase, Cloudinary, Web Development
